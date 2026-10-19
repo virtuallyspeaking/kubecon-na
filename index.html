@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtually Speaking Podcast @ KubeCon NA — Book Your Recording Slot</title>
+  <script>
+    // Inline SVG icon set (replacing external Lucide library)
+    const icons = {
+      'map-pin': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+      'calendar-plus': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="20"/><line x1="9" y1="17" x2="15" y2="17"/></svg>',
+      'play-circle': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>',
+      'clock': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+      'users': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+      'radio': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>',
+      'message-circle': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+      'rss': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>',
+      'share-2': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>',
+      'shield-check': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>',
+      'headphones': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>',
+      'music': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+      'mail': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+      'calendar': '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+    };
+    function renderIcons() {
+      document.querySelectorAll('[data-lucide]').forEach(function(el) {
+        var name = el.getAttribute('data-lucide');
+        if (icons[name]) {
+          var svg = icons[name].replace(/width="24"/g, el.style.width ? '' : 'width="' + (el.getAttribute('width') || 24) + '"').replace(/height="24"/g, el.style.height ? '' : 'height="' + (el.getAttribute('height') || 24) + '"');
+          el.innerHTML = svg;
+          el.removeAttribute('data-lucide');
+        }
+      });
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --blue: #0091DA;
+      --blue-dark: #0072AA;
+      --blue-deeper: #004F78;
+      --blue-light: #E3F4FC;
+      --black: #0a111a;
+      --gray-dark: #0e1c2e;
+      --gray-mid: #1e3a55;
+      --gray-light: #f4f7fb;
+      --text: #1a1a1a;
+      --text-muted: #666;
+      --border: #dce8f0;
+      --white: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--white);
+    }
+
+    a { color: var(--blue-dark); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      background: var(--black);
+      padding: 0.85rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-title {
+      color: white;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-title span { color: var(--blue); }
+
+    .nav-cta {
+      background: var(--blue);
+      color: #ffffff !important;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+      text-decoration: none !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--blue-dark);
+      color: #ffffff !important;
+      text-decoration: none !important;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: var(--black);
+      color: white;
+      padding: 5rem 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(0,145,218,0.14) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-inner { flex-direction: column; }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(0,145,218,0.15);
+      border: 1px solid rgba(0,145,218,0.35);
+      color: #7dd8f8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 1.25rem;
+      max-width: 680px;
+    }
+
+    .hero h1 span { color: var(--blue); }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 560px;
+      margin: 0 0 2.25rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blue);
+      color: #ffffff;
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-dark);
+      color: white;
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      padding: 0.85rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      border: 1px solid rgba(255,255,255,0.25);
+      transition: border-color 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255,255,255,0.6);
+      color: white;
+      text-decoration: none;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 2rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+
+    .hero-meta-item i {
+      width: 15px;
+      height: 15px;
+      color: var(--blue);
+    }
+
+    /* ===== SECTIONS ===== */
+    .section { padding: 5rem 0; }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--blue-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+      font-weight: 800;
+      margin: 0 0 1rem;
+      line-height: 1.2;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 560px;
+      margin: 0 0 3rem;
+    }
+
+    /* ===== EXPECT CARDS ===== */
+    .expect-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .expect-card {
+      background: var(--gray-light);
+      border-radius: 12px;
+      padding: 1.75rem;
+      border: 1px solid var(--border);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+
+    .expect-card:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .expect-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--blue-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .expect-icon i {
+      width: 22px;
+      height: 22px;
+      color: var(--blue-dark);
+    }
+
+    .expect-card h3 { font-size: 1rem; font-weight: 700; margin: 0 0 0.4rem; }
+    .expect-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.55; }
+
+    /* ===== ABOUT ===== */
+    .about-section { background: var(--gray-light); padding: 5rem 0; }
+
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    .about-content h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+      font-weight: 800;
+      margin: 0 0 1.25rem;
+      line-height: 1.2;
+    }
+
+    .about-content p { color: var(--text-muted); font-size: 1.05rem; margin: 0 0 1.25rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .stat-number { font-size: 1.75rem; font-weight: 800; color: var(--blue-dark); display: block; }
+    .stat-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
+
+    .listen-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.75rem;
+    }
+
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--black);
+      color: white;
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .listen-btn:hover { background: var(--gray-mid); text-decoration: none; color: white; }
+    .listen-btn i { width: 15px; height: 15px; }
+
+    /* ===== STEPS ===== */
+    .steps-section { padding: 5rem 0; }
+
+    .steps-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0;
+      position: relative;
+      margin-top: 2.5rem;
+    }
+
+    .step { text-align: center; padding: 2rem 1.5rem; position: relative; }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 2.75rem;
+      right: 0;
+      width: 1px;
+      height: 2rem;
+      background: var(--border);
+    }
+
+    @media (max-width: 640px) { .step:not(:last-child)::after { display: none; } }
+
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--blue);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin: 0 auto 1rem;
+    }
+
+    .step h3 { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.35rem; }
+    .step p { font-size: 0.85rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+    /* ===== TOPICS ===== */
+    .topics-section { background: var(--black); color: white; padding: 5rem 0; }
+    .topics-section .section-label { color: #7dd8f8; }
+    .topics-section .section-desc { color: rgba(255,255,255,0.6); }
+
+    .topics-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+    .topic-chip {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.82);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+
+    .topic-chip:hover {
+      background: rgba(0,145,218,0.2);
+      border-color: rgba(0,145,218,0.45);
+    }
+
+    /* ===== CTA ===== */
+    .cta-section { padding: 5rem 0; text-align: center; }
+
+    .cta-inner {
+      background: linear-gradient(135deg, var(--black) 0%, var(--gray-dark) 100%);
+      border-radius: 20px;
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-inner::before {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(0,145,218,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner h2 {
+      color: white;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin: 0 0 1rem;
+    }
+
+    .cta-inner p {
+      color: rgba(255,255,255,0.6);
+      font-size: 1.05rem;
+      margin: 0 auto 2.5rem;
+      max-width: 480px;
+    }
+
+    .cta-details {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+    }
+
+    .cta-detail {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.875rem;
+    }
+
+    .cta-detail i { width: 15px; height: 15px; color: var(--blue); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--black);
+      color: rgba(255,255,255,0.4);
+      padding: 2rem 0;
+      font-size: 0.85rem;
+    }
+
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      font-weight: 600;
+    }
+
+    .footer-links { display: flex; gap: 1.5rem; }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.8); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="container">
+      <div class="nav-brand">
+        <span class="nav-title"><span>Virtually Speaking</span> Podcast</span>
+      </div>
+      <a href="#book" class="nav-cta">Book a Slot</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-badge">
+            <i data-lucide="map-pin" style="width:12px;height:12px;"></i>
+            Live @ KubeCon NA 2026
+          </div>
+          <h1>Be a Guest on<br><span>Virtually Speaking</span><br>at KubeCon North America</h1>
+          <p>We're recording live on the show floor. Share your experience, expertise, and insights with the global cloud native community.</p>
+          <div class="hero-actions">
+            <a href="#book" class="btn-primary">
+              <i data-lucide="calendar-plus"></i>
+              Book Your Recording Slot
+            </a>
+            <a href="#about" class="btn-secondary">
+              <i data-lucide="play-circle"></i>
+              Listen to Episodes
+            </a>
+          </div>
+          <div class="hero-meta">
+            <div class="hero-meta-item"><i data-lucide="clock"></i> 30 min recording</div>
+            <div class="hero-meta-item"><i data-lucide="users"></i> Global cloud native audience</div>
+            <div class="hero-meta-item"><i data-lucide="radio"></i> All major platforms</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT TO EXPECT -->
+  <section class="section" id="expect">
+    <div class="container">
+      <div class="section-label">What to Expect</div>
+      <h2 class="section-title">Everything you need to know<br>before your recording</h2>
+      <p class="section-desc">We keep it relaxed and conversational. No scripts, no surprise questions — just a real discussion about the topics you know best.</p>
+      <div class="expect-grid">
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="clock"></i></div>
+          <h3>30 Minute Session</h3>
+          <p>Focused, conversational recordings that respect your time at a busy conference.</p>
+        </div>
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="map-pin"></i></div>
+          <h3>On-Site at the Show</h3>
+          <p>Find us at Solution Showcase, Booth #129, Salt Palace Convention Center. Your booking confirmation includes full location details.</p>
+        </div>
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="message-circle"></i></div>
+          <h3>No Script Required</h3>
+          <p>Come as you are. We share a few topic prompts in advance so you can prepare naturally.</p>
+        </div>
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="rss"></i></div>
+          <h3>Published Globally</h3>
+          <p>Episodes go live on Spotify, Apple Podcasts, YouTube, and the Virtually Speaking feed.</p>
+        </div>
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="share-2"></i></div>
+          <h3>Social Amplification</h3>
+          <p>We share audiograms and clips you can repost on LinkedIn after the episode drops.</p>
+        </div>
+        <div class="expect-card">
+          <div class="expect-icon"><i data-lucide="shield-check"></i></div>
+          <h3>Reviewed Before Publishing</h3>
+          <p>You have a chance to flag anything before the episode goes live. No surprises.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div class="about-content">
+          <div class="section-label">About the Show</div>
+          <h2>Real conversations about cloud native, Kubernetes, and the infrastructure powering modern applications</h2>
+          <p>Virtually Speaking brings together practitioners, architects, and leaders from across the cloud native ecosystem to talk about what's actually happening in Kubernetes and container infrastructure — the wins, the challenges, and what's coming next.</p>
+          <p>Whether you're a longtime Kubernetes user, a platform engineer, or exploring cloud native for the first time, there's a seat at the table for you.</p>
+          <div class="listen-links">
+            <a href="https://open.spotify.com/show/3IoMDYvubwjQg8RMvUeHcY" target="_blank" rel="noopener noreferrer" class="listen-btn"><i data-lucide="headphones"></i> Spotify</a>
+            <a href="https://podcasts.apple.com/us/podcast/virtually-speaking-podcast/id1084076135" target="_blank" rel="noopener noreferrer" class="listen-btn"><i data-lucide="music"></i> Apple Podcasts</a>
+            <a href="https://www.youtube.com/@VMwareCloudFoundation" target="_blank" rel="noopener noreferrer" class="listen-btn"><i data-lucide="play-circle"></i> YouTube</a>
+          </div>
+        </div>
+        <div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number">3,000+</span>
+              <span class="stat-label">Listeners per episode</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">200+</span>
+              <span class="stat-label">Episodes published</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">2</span>
+              <span class="stat-label">Recording days at KubeCon</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">Global</span>
+              <span class="stat-label">Cloud native audience reach</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="steps-section">
+    <div class="container">
+      <div style="text-align:center;">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Book in 3 easy steps</h2>
+      </div>
+      <div class="steps-list">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Pick a Time</h3>
+          <p>Choose an available slot from the booking calendar that fits your conference schedule.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Share Your Topic</h3>
+          <p>Tell us your focus area and a few talking points so we can prep great questions.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Show Up &amp; Record</h3>
+          <p>Find us at Booth #129 in the Solution Showcase, grab a seat, and let's have a great conversation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOPICS -->
+  <section class="topics-section">
+    <div class="container">
+      <div class="section-label">Popular Topics</div>
+      <h2 class="section-title" style="color:white;margin-bottom:0.75rem;">What our guests talk about</h2>
+      <p class="section-desc">Have a different angle? Bring it. We're open to any topic that matters to the cloud native community.</p>
+      <div class="topics-grid">
+        <span class="topic-chip">Kubernetes</span>
+        <span class="topic-chip">Cloud Native</span>
+        <span class="topic-chip">VMware Cloud Foundation</span>
+        <span class="topic-chip">Tanzu</span>
+        <span class="topic-chip">AI/ML Infrastructure</span>
+        <span class="topic-chip">Container Security</span>
+        <span class="topic-chip">Multi-Cloud Architecture</span>
+        <span class="topic-chip">Platform Engineering</span>
+        <span class="topic-chip">DevOps</span>
+        <span class="topic-chip">Observability</span>
+        <span class="topic-chip">Service Mesh</span>
+        <span class="topic-chip">GitOps</span>
+        <span class="topic-chip">Edge Computing</span>
+        <span class="topic-chip">FinOps &amp; Cloud Cost</span>
+        <span class="topic-chip">Customer Migration Stories</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING CTA -->
+  <section class="cta-section" id="book">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="section-label" style="color:#7dd8f8;">Reserve Your Spot</div>
+        <h2>Ready to be on the show?</h2>
+        <p>Slots are limited — we're recording November 10–11 at KubeCon NA. Book early to secure your preferred time.</p>
+        <a href="https://calendar.app.google/JzA6V5gW5QaYVoRM9" target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size:1.1rem; padding:1rem 2.25rem;">
+          <i data-lucide="calendar-plus"></i>
+          Book Your Recording Slot
+        </a>
+        <div class="cta-details">
+          <div class="cta-detail"><i data-lucide="clock"></i> 30 min sessions</div>
+          <div class="cta-detail"><i data-lucide="map-pin"></i> Solution Showcase, Booth #129</div>
+          <div class="cta-detail"><i data-lucide="calendar"></i> November 10–11, 2026</div>
+          <div class="cta-detail"><i data-lucide="mail"></i> Confirmation sent instantly</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-brand">
+        Virtually Speaking Podcast · Broadcom
+      </div>
+      <div class="footer-links">
+        <a href="#">LinkedIn</a>
+        <a href="https://open.spotify.com/show/3IoMDYvubwjQg8RMvUeHcY" target="_blank" rel="noopener noreferrer">Spotify</a>
+        <a href="https://podcasts.apple.com/us/podcast/virtually-speaking-podcast/id1084076135" target="_blank" rel="noopener noreferrer">Apple Podcasts</a>
+        <a href="https://www.youtube.com/@VMwareCloudFoundation" target="_blank" rel="noopener noreferrer">YouTube</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>renderIcons();</script>
+</body>
+</html>
